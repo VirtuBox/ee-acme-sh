@@ -37,7 +37,7 @@ fi
 if [ "$acmemode" = "1" ]
 then
   mkdir -p  ~/.ee-acme.sh
-  wget -O ~/.ee-acme.sh/ee-acme
+  wget -O ~/.ee-acme.sh/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-cf
   echo '. "/root/.ee-acme/ee-acme"' >> ~/.bashrc
   source ~/.bashrc
   echo ""
@@ -47,13 +47,15 @@ then
   read -r cf_api_key
   export CF_Email="$cf_email"
   export CF_Key="$cf_api_key"
-else 
-  wget -O ~/.ee-acme.sh/ee-acme
+elif [[ "$acmemode" = "2" ]]; then
+  wget -O ~/.ee-acme.sh/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-standalone
   echo '. "/root/.ee-acme/ee-acme"' >> ~/.bashrc
   source ~/.bashrc
   echo "" 
+else 
+  echo "this option doesn't exist"
+  exit 1
 fi
-
 
 
 # We're done !
