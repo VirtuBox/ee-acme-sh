@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ee-ssl-www ()
+ee-acme-www ()
 {
 clear
 echo ""
