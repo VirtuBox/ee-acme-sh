@@ -39,8 +39,8 @@ cat <<EOF >/var/www/$domain_name/conf/nginx/ssl.conf
     listen [::]:443 ssl http2;
     ssl on;    
     ssl_certificate /etc/letsencrypt/live/$domain_name/fullchain.pem;
-    ssl_certificate_key    /etc/letsencrypt/$domain_name/privkey.pem;
-    ssl_trusted_certificate /etc/letsencrypt/$domain_name/cert.pem;
+    ssl_certificate_key    /etc/letsencrypt/live/$domain_name/key.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/$domain_name/cert.pem;
 EOF
 fi
 
