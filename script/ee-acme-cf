@@ -14,18 +14,6 @@ then
   exit 1
 fi
 
-if [ ! -f ~/.acme.sh/acme.sh ]; then
-wget -O -  https://get.acme.sh | sh
-source ~/.bashrc
-
-echo "What is your Cloudflare email address ? :"
-read -r cf_email
-echo "What is your Cloudflare API Key ?" 
-read -r cf_api_key
-export CF_Email="$cf_email"
-export CF_Key="$cf_api_key"
-fi
-
 ~/.acme.sh/acme.sh --issue -d "$domain_name" -d www."$domain_name"  --keylength ec-384 --dns  dns_cf --dnssleep 60
 
 
@@ -56,9 +44,6 @@ cat <<EOF >/var/www/$domain_name/conf/nginx/ssl.conf
 EOF
 fi
 
-
-
-
 if [ ! -f /etc/nginx/conf.d/force-ssl-"$domain_name".conf ]; then
   
 # add the redirection from http to https
@@ -78,6 +63,7 @@ fi
 
 }
 
+
 ee-acme-subdomain ()
 {
 echo "Enter your sub-domain name: "
@@ -87,11 +73,6 @@ if [ ! -f /etc/nginx/sites-available/$domain_name ];
 then
   echo "Error: non existant domain"
   exit 1
-fi
-
-if [ ! -f ~/.acme.sh/acme.sh ]; then
-wget -O -  https://get.acme.sh | sh
-source ~/.bashrc
 fi
 
 # issue cert
