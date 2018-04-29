@@ -41,7 +41,6 @@ then
   wget -O ~/.ee-acme/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-cf
   cd || exit
   echo '. "/root/.ee-acme/ee-acme"' >> .bashrc
-  source .bashrc
   echo ""
   echo "What is your Cloudflare email address ? :"
   read -r cf_email
@@ -53,7 +52,6 @@ elif [[ "$acmemode" = "2" ]]; then
   wget -O ~/.ee-acme/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-standalone
   cd || exit
   echo '. "/root/.ee-acme/ee-acme"' >> .bashrc
-  source .bashrc
   echo "" 
 else 
   echo "this option doesn't exist"
@@ -63,6 +61,8 @@ fi
 # We're done !
 echo ""
 echo -e "       ${CGREEN}ee-acme-sh was installed successfully !${CEND}"
+echo ""
+echo "use the command 'source .bashrc' to enable ee-acme-sh"
 echo ""
 echo "       ee-acme-sh usage :"      
 echo ""
