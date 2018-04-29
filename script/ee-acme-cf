@@ -65,7 +65,7 @@ fi
 
 ee-acme-subdomain ()
 {
-echo "Enter your sub-domain name: "
+echo "What is your subdomain ? "
 read -r  domain_name
 
 if [ ! -f /etc/nginx/sites-available/$domain_name ]; 
@@ -122,7 +122,7 @@ ee-acme-wildcard ()
 {
 clear
 echo ""
-echo "What is your domain ?: "
+echo "What is your domain ? (without www.)  "
 read -r domain_name
 echo ""
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ee-acme-www ()
+ee-acme-domain ()
 {
 clear
 echo ""
@@ -80,7 +80,7 @@ fi
 
 ee-acme-subdomain ()
 {
-echo "Enter your sub-domain name: "
+echo "What is your subdomain ? "
 read -r  domain_name
 
 if [ ! -f ~/.acme.sh/acme.sh ]; then

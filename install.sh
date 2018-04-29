@@ -12,18 +12,20 @@ if [ "$(id -u)" != "0" ]; then
     exit 1
 fi
 
-# additionals modules choice
+# ACME validation choice
 
 echo ""
 echo "Welcome to the ee-acme-sh installation."
 echo ""
 
 echo "What mode of validation you want to use with  Acme.sh ?"
-echo "1) Cloudflare API validation with wildcard certificate support"
-echo "2) Standalone mode validation"
+echo "1) Cloudflare API validation (domain/subdomain/wildcard certs)"
+echo "2) Standalone mode validation (domain/subdomain certs)"
 echo ""
 read -r acmemode 
 echo ""
+
+# install acme.sh if needed
 
 echo "checking if acme.sh is already installed"
 if [ ! -f ~/.acme.sh/acme.sh ]; then
@@ -31,6 +33,8 @@ echo "installing acme.sh"
 wget -O -  https://get.acme.sh | sh
 source ~/.bashrc
 fi 
+
+# install ee-acme-cf or ee-acme-standalone
 
 if [ "$acmemode" = "1" ]
 then
@@ -41,8 +45,8 @@ then
   echo ""
   echo "What is your Cloudflare email address ? :"
   read -r cf_email
-  echo "What is your Cloudflare API Key ?" 
-  read -r cf_api_key
+  echo "What is your Cloudflare API Key ? You API Key is available on https://www.cloudflare.com/a/profile" 
+    read -r cf_api_key
   export CF_Email="$cf_email"
   export CF_Key="$cf_api_key"
 elif [[ "$acmemode" = "2" ]]; then
@@ -54,7 +58,6 @@ else
   echo "this option doesn't exist"
   exit 1
 fi
-
 
 # We're done !
 echo ""
