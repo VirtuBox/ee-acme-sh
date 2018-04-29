@@ -35,10 +35,9 @@ source ~/.bashrc
 fi 
 
 # install ee-acme-cf or ee-acme-standalone
-
+mkdir -p  ~/.ee-acme
 if [ "$acmemode" = "1" ]
 then
-  mkdir -p  ~/.ee-acme.sh
   wget -O ~/.ee-acme/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-cf
   echo '. "/root/.ee-acme/ee-acme"' >> ~/.bashrc
   source ~/.bashrc
