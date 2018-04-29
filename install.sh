@@ -39,8 +39,9 @@ mkdir -p  ~/.ee-acme
 if [ "$acmemode" = "1" ]
 then
   wget -O ~/.ee-acme/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-cf
-  echo '. "/root/.ee-acme/ee-acme"' >> ~/.bashrc
-  source ~/.bashrc
+  cd || exit
+  echo '. "/root/.ee-acme/ee-acme"' >> .bashrc
+  source .bashrc
   echo ""
   echo "What is your Cloudflare email address ? :"
   read -r cf_email
@@ -50,8 +51,9 @@ then
   export CF_Key="$cf_api_key"
 elif [[ "$acmemode" = "2" ]]; then
   wget -O ~/.ee-acme/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-standalone
-  echo '. "/root/.ee-acme/ee-acme"' >> ~/.bashrc
-  source ~/.bashrc
+  cd || exit
+  echo '. "/root/.ee-acme/ee-acme"' >> .bashrc
+  source .bashrc
   echo "" 
 else 
   echo "this option doesn't exist"
