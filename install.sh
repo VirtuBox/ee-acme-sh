@@ -12,8 +12,6 @@ if [ "$(id -u)" != "0" ]; then
     exit 1
 fi
 
-clear
-
 # additionals modules choice
 
 echo ""
@@ -21,7 +19,7 @@ echo "Welcome to the ee-acme-sh installation."
 echo ""
 
 echo "What mode of validation you want to use with  Acme.sh ?"
-echo "1) Cloudflare API validation"
+echo "1) Cloudflare API validation with wildcard certificate support"
 echo "2) Standalone mode validation"
 echo ""
 read -r acmemode 

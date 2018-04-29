@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ee-acme-www ()
+ee-acme-domain ()
 {
 clear
 echo ""
@@ -63,7 +63,6 @@ fi
 
 }
 
-
 ee-acme-subdomain ()
 {
 echo "Enter your sub-domain name: "
@@ -114,5 +113,70 @@ fi
 --key-file /etc/letsencrypt/live/$domain_name/key.pem \
 --fullchain-file /etc/letsencrypt/live/$domain_name/fullchain.pem \
 --reloadcmd "systemctl reload nginx.service"
+
+}
+
+
+
+ee-acme-wildcard ()
+{
+clear
+echo ""
+echo "What is your domain ?: "
+read -r domain_name
+echo ""
+
+if [ ! -f /etc/nginx/sites-available/$domain_name ]; 
+then
+  echo "Error: non existant domain"
+  exit 1
+fi
+
+~/.acme.sh/acme.sh --issue -d "$domain_name" -d "*.$domain_name"  --keylength ec-384 --dns  dns_cf --dnssleep 60
+
+
+if [ ! -d /etc/letsencrypt/live/$domain_name ]; then
+  
+# create folder to store certificate  
+mkdir -p /etc/letsencrypt/live/$domain_name
+fi
+
+# install the cert and reload nginx
+acme.sh --install-cert -d $domain_name --ecc \
+--cert-file /etc/letsencrypt/live/$domain_name/cert.pem \
+--key-file /etc/letsencrypt/live/$domain_name/key.pem \
+--fullchain-file /etc/letsencrypt/live/$domain_name/fullchain.pem \
+--reloadcmd "systemctl reload nginx.service"
+
+# add certificate to the nginx vhost configuration
+
+if [ ! -f /var/www/$domain_name/conf/nginx/ssl.conf ]; then
+
+cat <<EOF >/var/www/$domain_name/conf/nginx/ssl.conf
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    ssl on;    
+    ssl_certificate /etc/letsencrypt/live/$domain_name/fullchain.pem;
+    ssl_certificate_key    /etc/letsencrypt/live/$domain_name/key.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/$domain_name/cert.pem;
+EOF
+fi
+
+if [ ! -f /etc/nginx/conf.d/force-ssl-$domain_name.conf ]; then
+  
+# add the redirection from http to https
+
+cat <<EOF >/etc/nginx/conf.d/force-ssl-$domain_name.conf
+server {
+	listen 80;
+  listen [::]:80;
+	server_name $domain_name *.$domain_name;
+	return 301 https://\$host\$request_uri;
+}
+EOF
+
+fi
+
+
 
 }
