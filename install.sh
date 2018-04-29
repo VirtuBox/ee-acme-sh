@@ -63,10 +63,21 @@ fi
 echo ""
 echo -e "       ${CGREEN}ee-acme-sh was installed successfully !${CEND}"
 echo ""
-echo "ee-acme-sh usage :"      
+echo "       ee-acme-sh usage :"      
 echo ""
-echo "use one of the following command to install a Let's Encrypt SSL certificate, ee-acme will ask you what domain you want to secure"
-echo "ee-acme-www : install a Let's Encrypt SSL certificate on a domain with www alias (yourdomain.tld + www.yourdomain.tld)"
-echo "ee-acme-subdomain : install a Let's Encrypt SSL certificate on a subdomain"
-echo ""
+if [ "$acmemode" = "1" ]
+then
+  echo "                ee-acme-domain : install Let's Encrypt SSL certificate on domain.tld + www.domain.tld"
+  echo ""
+  echo "                ee-acme-subdomain : install Let's Encrypt SSL certificate on sub.domain.tld "
+  echo ""
+  echo "                ee-acme-wildcard : install Let's Encrypt SSL certificate on domain.tld + *.domain.tld"
+  echo ""
+else 
+  echo "                ee-acme-domain : install Let's Encrypt SSL certificate on domain.tld + www.domain.tld"
+  echo ""
+  echo "                ee-acme-subdomain : install Let's Encrypt SSL certificate on sub.domain.tld"
+  echo ""
+fi
+
 
