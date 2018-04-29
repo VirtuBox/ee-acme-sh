@@ -39,7 +39,7 @@ fi
 if [ "$acmemode" = "1" ]
 then
   mkdir -p  ~/.ee-acme.sh
-  wget -O ~/.ee-acme.sh/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-cf
+  wget -O ~/.ee-acme/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-cf
   echo '. "/root/.ee-acme/ee-acme"' >> ~/.bashrc
   source ~/.bashrc
   echo ""
@@ -50,7 +50,7 @@ then
   export CF_Email="$cf_email"
   export CF_Key="$cf_api_key"
 elif [[ "$acmemode" = "2" ]]; then
-  wget -O ~/.ee-acme.sh/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-standalone
+  wget -O ~/.ee-acme/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-standalone
   echo '. "/root/.ee-acme/ee-acme"' >> ~/.bashrc
   source ~/.bashrc
   echo "" 
