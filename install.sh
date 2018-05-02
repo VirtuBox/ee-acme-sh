@@ -1,5 +1,7 @@
 #!/bin/bash
 
+clear
+
 # Colors
 CSI="\\033["
 CEND="${CSI}0m"
@@ -11,6 +13,19 @@ if [ "$(id -u)" != "0" ]; then
     echo "Error: You must be root to run this script, please use the root user to install the software."
     exit 1
 fi
+
+# install acme.sh if needed
+echo ""
+echo "checking if acme.sh is already installed"
+echo ""
+if [ ! -f ~/.acme.sh/acme.sh ]; then
+echo ""
+echo "installing acme.sh"
+echo ""
+wget -O -  https://get.acme.sh | sh
+source .bashrc
+fi
+
 
 # ACME validation choice
 
@@ -25,15 +40,6 @@ echo ""
 read -r acmemode
 echo ""
 
-# install acme.sh if needed
-
-echo "checking if acme.sh is already installed"
-if [ ! -f ~/.acme.sh/acme.sh ]; then
-echo "installing acme.sh"
-wget -O -  https://get.acme.sh | sh
-source .bashrc
-fi
-
 # install ee-acme-cf or ee-acme-standalone
 mkdir -p  ~/.ee-acme
 if [ "$acmemode" = "1" ]
@@ -44,9 +50,10 @@ then
   source .bashrc
   echo ""
   echo "What is your Cloudflare email address ? :"
+  echo ""
   read -r cf_email
   echo "What is your Cloudflare API Key ? You API Key is available on https://www.cloudflare.com/a/profile"
-    read -r cf_api_key
+  read -r cf_api_key
 
   echo "SAVED_CF_Key='$cf_api_key'" >> .acme.sh/account.conf
   echo "SAVED_CF_Email='$cf_email'" >> .acme.sh/account.conf
