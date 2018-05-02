@@ -62,17 +62,18 @@ fi
 echo ""
 echo -e "       ${CGREEN}ee-acme-sh was installed successfully !${CEND}"
 echo ""
-echo "You have to run the command ' ${CGREEN}source .bashrc${CEND}' to enable ee-acme-sh"
+echo "You have to run the following command  to enable ee-acme-sh"
 echo ""
+echo -e "     ${CGREEN}source .bashrc${CEND}"
 echo "       ee-acme-sh usage :"
 echo ""
 if [ "$acmemode" = "1" ]
 then
-  echo "                ${CGREEN}ee-acme-domain${CEND} : install Let's Encrypt SSL certificate on domain.tld + www.domain.tld"
+  echo "               ee-acme-domain : install Let's Encrypt SSL certificate on domain.tld + www.domain.tld"
   echo ""
-  echo "               ${CGREEN}ee-acme-subdomain${CEND} : install Let's Encrypt SSL certificate on sub.domain.tld "
+  echo "               ee-acme-subdomain : install Let's Encrypt SSL certificate on sub.domain.tld "
   echo ""
-  echo "                ${CGREEN}ee-acme-wildcard${CEND} : install Let's Encrypt SSL certificate on domain.tld + *.domain.tld"
+  echo "               ee-acme-wildcard : install Let's Encrypt SSL certificate on domain.tld + *.domain.tld"
   echo ""
 else
   echo "                ee-acme-domain : install Let's Encrypt SSL certificate on domain.tld + www.domain.tld"

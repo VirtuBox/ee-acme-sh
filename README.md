@@ -25,7 +25,7 @@ source .bashrc
 
 ```bash
 # Install a SSL certificate on a domain + alias www
-ee-acme-www
+1. ee-acme-www
 
 # Install a SSL certificate on a subdomain 
 ee-acme-subdomain 
@@ -37,4 +37,4 @@ ee-acme-wildcard
 ## Limitations
 
 -   Wildcard certs are only available with Cloudflare DNS API 
--   
+ 
