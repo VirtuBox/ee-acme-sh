@@ -25,7 +25,7 @@ source .bashrc
 
 ```bash
 # Install a SSL certificate on a domain + alias www
-1. ee-acme-www
+ee-acme-www
 
 # Install a SSL certificate on a subdomain 
 ee-acme-subdomain 
