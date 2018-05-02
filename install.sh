@@ -22,7 +22,7 @@ echo "What mode of validation you want to use with  Acme.sh ?"
 echo "1) Cloudflare API validation (domain/subdomain/wildcard certs)"
 echo "2) Standalone mode validation (domain/subdomain certs)"
 echo ""
-read -r acmemode 
+read -r acmemode
 echo ""
 
 # install acme.sh if needed
@@ -32,7 +32,7 @@ if [ ! -f ~/.acme.sh/acme.sh ]; then
 echo "installing acme.sh"
 wget -O -  https://get.acme.sh | sh
 source ~/.bashrc
-fi 
+fi
 
 # install ee-acme-cf or ee-acme-standalone
 mkdir -p  ~/.ee-acme
@@ -44,7 +44,7 @@ then
   echo ""
   echo "What is your Cloudflare email address ? :"
   read -r cf_email
-  echo "What is your Cloudflare API Key ? You API Key is available on https://www.cloudflare.com/a/profile" 
+  echo "What is your Cloudflare API Key ? You API Key is available on https://www.cloudflare.com/a/profile"
     read -r cf_api_key
   export CF_Email="$cf_email"
   export CF_Key="$cf_api_key"
@@ -52,8 +52,8 @@ elif [[ "$acmemode" = "2" ]]; then
   wget -O ~/.ee-acme/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-standalone
   cd || exit
   echo '. "/root/.ee-acme/ee-acme"' >> .bashrc
-  echo "" 
-else 
+  echo ""
+else
   echo "this option doesn't exist"
   exit 1
 fi
@@ -62,19 +62,19 @@ fi
 echo ""
 echo -e "       ${CGREEN}ee-acme-sh was installed successfully !${CEND}"
 echo ""
-echo "use the command 'source .bashrc' to enable ee-acme-sh"
+echo "You have to run the command ' ${CGREEN}source .bashrc${CEND}' to enable ee-acme-sh"
 echo ""
-echo "       ee-acme-sh usage :"      
+echo "       ee-acme-sh usage :"
 echo ""
 if [ "$acmemode" = "1" ]
 then
-  echo "                ee-acme-domain : install Let's Encrypt SSL certificate on domain.tld + www.domain.tld"
+  echo "                ${CGREEN}ee-acme-domain${CEND} : install Let's Encrypt SSL certificate on domain.tld + www.domain.tld"
   echo ""
-  echo "                ee-acme-subdomain : install Let's Encrypt SSL certificate on sub.domain.tld "
+  echo "               ${CGREEN}ee-acme-subdomain${CEND} : install Let's Encrypt SSL certificate on sub.domain.tld "
   echo ""
-  echo "                ee-acme-wildcard : install Let's Encrypt SSL certificate on domain.tld + *.domain.tld"
+  echo "                ${CGREEN}ee-acme-wildcard${CEND} : install Let's Encrypt SSL certificate on domain.tld + *.domain.tld"
   echo ""
-else 
+else
   echo "                ee-acme-domain : install Let's Encrypt SSL certificate on domain.tld + www.domain.tld"
   echo ""
   echo "                ee-acme-subdomain : install Let's Encrypt SSL certificate on sub.domain.tld"
