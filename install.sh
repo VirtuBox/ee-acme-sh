@@ -47,8 +47,10 @@ then
   read -r cf_email
   echo "What is your Cloudflare API Key ? You API Key is available on https://www.cloudflare.com/a/profile"
     read -r cf_api_key
-export CF_Email="$cf_email"
-export CF_Key="$cf_api_key"
+
+  echo "SAVED_CF_Key='$cf_api_key'" >> .acme.sh/account.conf
+  echo "SAVED_CF_Email='$cf_email'" >> .acme.sh/account.conf
+
 elif [[ "$acmemode" = "2" ]]; then
   wget -O ~/.ee-acme/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-standalone
   echo '. "/root/.ee-acme/ee-acme"' >> .bashrc
@@ -66,6 +68,8 @@ echo ""
 echo "You have to run the following command  to enable ee-acme-sh"
 echo ""
 echo -e "     ${CGREEN}source .bashrc${CEND}"
+echo ""
+echo ""
 echo "       ee-acme-sh usage :"
 echo ""
 if [ "$acmemode" = "1" ]
