@@ -31,7 +31,7 @@ echo "checking if acme.sh is already installed"
 if [ ! -f ~/.acme.sh/acme.sh ]; then
 echo "installing acme.sh"
 wget -O -  https://get.acme.sh | sh
-source ~/.bashrc
+source .bashrc
 fi
 
 # install ee-acme-cf or ee-acme-standalone
@@ -46,8 +46,8 @@ then
   read -r cf_email
   echo "What is your Cloudflare API Key ? You API Key is available on https://www.cloudflare.com/a/profile"
     read -r cf_api_key
-  export CF_Email="$cf_email"
-  export CF_Key="$cf_api_key"
+export CF_Email="$cf_email"
+export CF_Key="$cf_api_key"
 elif [[ "$acmemode" = "2" ]]; then
   wget -O ~/.ee-acme/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-standalone
   cd || exit
