@@ -15,7 +15,7 @@
 ## Installation
 
 ```bash
-bash <(wget --no-check-certificate -O - https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/install.sh)
+cd && bash <(wget --no-check-certificate -O - https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/install.sh)
 
 # enable acme.sh & ee-acme-sh
 source .bashrc
