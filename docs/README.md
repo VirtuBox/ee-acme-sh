@@ -12,7 +12,6 @@
 -   IPv6 Support
 -   ECDSA Certificates with ECC 384 Bits private key
 -   Automated Certificates Renewal
-- 
 
 
 ## Installation
