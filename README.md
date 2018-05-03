@@ -2,15 +2,17 @@
 
 ### Bash script to install Let's Encrypt SSL certificates automatically using acme.sh on servers running with EasyEngine
 
+![ee-acme-sh](https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/ee-acme.png)
+
 ## Features
 
 -   Automated Installation of Let's Encrypt SSL certificates using [acme.sh](http://acme.sh)
 -   Acme validation with standalone mode or Cloudflare DNS API
 -   Domain, Subdomain & Wildcard SSL Certificates support
 -   IPv6 Support
+-   ECDSA Certificates with ECC 384 Bits private key
 -   Automated Certificates Renewal
 
-![ee-acme-sh](https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/ee-acme.png)
 
 ## Installation
 
