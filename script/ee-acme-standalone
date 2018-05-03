@@ -38,7 +38,7 @@ ee-acme-domain ()
         --fullchain-file /etc/letsencrypt/live/$domain_name/fullchain.pem \
         --reloadcmd "systemctl reload nginx.service"
 
-    # add certificate to the nginx vhost configuration
+# add certificate to the nginx vhost configuration
 
     if [ ! -f /var/www/$domain_name/conf/nginx/ssl.conf ]; then
 
@@ -50,8 +50,20 @@ ee-acme-domain ()
     ssl_certificate_key    /etc/letsencrypt/live/$domain_name/key.pem;
     ssl_trusted_certificate /etc/letsencrypt/live/$domain_name/cert.pem;
 EOF
+else 
+  rm -rf /var/www/$domain_name/conf/nginx/ssl.conf
+  cat <<EOF >/var/www/$domain_name/conf/nginx/ssl.conf
+listen 443 ssl http2;
+listen [::]:443 ssl http2;
+ssl on;
+ssl_certificate /etc/letsencrypt/live/$domain_name/fullchain.pem;
+ssl_certificate_key    /etc/letsencrypt/live/$domain_name/key.pem;
+ssl_trusted_certificate /etc/letsencrypt/live/$domain_name/cert.pem;
+EOF
+
     fi
 
+# end add certificate to nginx vhost 
 
 
 
@@ -59,7 +71,7 @@ EOF
 
         # add the redirection from http to https
 
-        cat <<EOF >/etc/nginx/conf.d/force-ssl-$domain_name.conf
+cat <<EOF >/etc/nginx/conf.d/force-ssl-$domain_name.conf
 server {
 	listen 80;
   listen [::]:80;
@@ -100,27 +112,42 @@ ee-acme-subdomain ()
         rm -rf /etc/letsencrypt/live/$domain_name/*
     fi
 
-    if [ ! -f /etc/nginx/conf.d/force-ssl-$domain_name.conf ]; then
-        # add certificate to the nginx vhost configuration
-        cat <<EOF >/var/www/$domain_name/conf/nginx/ssl.conf
+    # add certificate to the nginx vhost configuration
+    
+  if [ ! -f /var/www/$domain_name/conf/nginx/ssl.conf ]; then
+    
+            cat <<EOF >/var/www/$domain_name/conf/nginx/ssl.conf
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        ssl on;
+        ssl_certificate /etc/letsencrypt/live/$domain_name/fullchain.pem;
+        ssl_certificate_key    /etc/letsencrypt/live/$domain_name/key.pem;
+        ssl_trusted_certificate /etc/letsencrypt/live/$domain_name/cert.pem;
+EOF
+    else 
+      rm -rf /var/www/$domain_name/conf/nginx/ssl.conf
+      cat <<EOF >/var/www/$domain_name/conf/nginx/ssl.conf
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
     ssl on;
     ssl_certificate /etc/letsencrypt/live/$domain_name/fullchain.pem;
-    ssl_certificate_key     /etc/letsencrypt/live/$domain_name/key.pem;
+    ssl_certificate_key    /etc/letsencrypt/live/$domain_name/key.pem;
     ssl_trusted_certificate /etc/letsencrypt/live/$domain_name/cert.pem;
 EOF
-    fi
+    
+        fi
+
+    # end add certificate to nginx vhost 
 
     if [ ! -f /etc/nginx/conf.d/force-ssl-$domain_name.conf ]; then
         # add the redirection from http to https
-        cat <<EOF >/etc/nginx/conf.d/force-ssl-$domain_name.conf
-server {
-	listen 80;
-  listen [::]:80;
-	server_name $domain_name;
-	return 301 https://$domain_name\$request_uri;
-}
+cat <<EOF >/etc/nginx/conf.d/force-ssl-$domain_name.conf
+          server {
+        	listen 80;
+          listen [::]:80;
+        	server_name $domain_name;
+        	return 301 https://$domain_name\$request_uri;
+        }
 EOF
     fi
 
