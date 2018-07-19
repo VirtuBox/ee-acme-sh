@@ -37,7 +37,7 @@ echo "What mode of validation you want to use with  Acme.sh ?"
 echo "1) Cloudflare API validation (domain/subdomain/wildcard certs)"
 echo "2) Standalone mode validation (domain/subdomain certs)"
 while [[ $acmemode != "1" && $acmemode != "2" ]]; do
-	read -r "Select an option [1-2]: " acmemode
+	read -p "Select an option [1-2]: " acmemode
 done
 echo ""
 
