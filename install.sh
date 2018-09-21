@@ -32,44 +32,27 @@ echo ""
 echo "Welcome to the ee-acme-sh installation."
 echo ""
 
-
 # install ee-acme-cf or ee-acme-standalone
-mkdir -p  ~/.ee-acme
-if [ "$acmemode" = "1" ]
-then
-    wget -O ~/.ee-acme/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-cf
-    cd || exit
-    echo '. "/root/.ee-acme/ee-acme"' >> .bashrc
-    source .bashrc
-    echo ""
-    echo "What is your Cloudflare email address ? :"
-    echo ""
-    read -r cf_email
-    echo "What is your Cloudflare API Key ? You API Key is available on https://www.cloudflare.com/a/profile"
-    read -r cf_api_key
-
-    echo "SAVED_CF_Key='$cf_api_key'" >> .acme.sh/account.conf
-    echo "SAVED_CF_Email='$cf_email'" >> .acme.sh/account.conf
-
-    elif [[ "$acmemode" = "2" ]]; then
-    wget -O ~/.ee-acme/ee-acme https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme-standalone
-    echo "alias ee-acme="/root/.ee-acme/ee-acme.sh""
-    echo '. "/root/.ee-acme/ee-acme"' >> .bashrc
-    source .bashrc
-    echo ""
+if [ -d $HOME/.ee-acme ]; then
+    rm -rf $HOME/.ee-acme/*
+    echo 'alias ee-acme="/root/.ee-acme/ee-acme.sh"' >> $HOME/.ee-acme/ee-acme
+    wget -O $HOME/.ee-acme/ee-acme.sh https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme.sh
+    chmod +x $HOME/.ee-acme/ee-acme.sh
 else
-    echo "this option doesn't exist"
-    exit 1
+    mkdir -p  $HOME/.ee-acme
+    wget -O $HOME/.ee-acme/ee-acme.sh https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme.sh
+    chmod +x $HOME/.ee-acme/ee-acme.sh
+    echo 'alias ee-acme="/root/.ee-acme/ee-acme.sh"' >> $HOME/.bashrc
 fi
+
 
 # We're done !
 echo ""
-echo -e "       ${CGREEN}ee-acme-sh was installed successfully !${CEND}"
+echo -e "     ${CGREEN}ee-acme-sh was installed successfully !${CEND}"
 echo ""
-echo "You have to run the following command  to enable ee-acme-sh"
+echo "You need to run the following command to enable ee-acme-sh"
 echo ""
 echo -e "     ${CGREEN}source .bashrc${CEND}"
-echo ""
 echo ""
 echo "Usage: ee-acme [type] <domain> [mode]"
 echo "  Types:"
@@ -80,17 +63,21 @@ echo "  Modes:"
 echo "       --standalone ..... acme challenge in standalone mode"
 echo "       --cf ..... acme challenge in dns mode with Cloudflare"
 echo "  Options:"
+echo "       --cert-only ... do not change nginx configuration, only display it"
 echo "       -h, --help, help ... displays this help information"
 echo "Examples:"
 echo ""
 echo "domain.tld + www.domain.tld in standalone mode :"
 echo "    ee-acme -d domain.tld --standalone"
 echo ""
-echo "sub.domain.tld in dns mode with Cloudflare"
+echo "sub.domain.tld in dns mode with Cloudflare :"
 echo "    ee-acme -s sub.domain.tld --cf"
 echo ""
 echo "wildcard certificate for domain.tld in dns mode with Cloudflare :"
 echo "    ee-acme -w domain.tld --cf"
+echo ""
+echo "domain.tld + www.domain.tld in standalone mode without editing Nginx configuration :"
+echo "    ee-acme -d domain.tld --standalone --cert-only"
 echo ""
 
 

@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# install acme.sh if needed
+echo ""
+echo "checking if acme.sh is already installed"
+echo ""
+if [ ! -f ~/.acme.sh/acme.sh ]; then
+    echo ""
+    echo "installing acme.sh"
+    echo ""
+    wget -O -  https://get.acme.sh | sh
+fi
+
 _help() {
     echo "Issue and install SSL certificates using acme.sh with EasyEngine"
     echo "Usage: ee-acme [type] <domain> [mode]"
