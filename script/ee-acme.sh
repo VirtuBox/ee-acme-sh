@@ -106,9 +106,9 @@ if [ -z "$acme_validation" ]; then
         read -p "Select an option [1-2]: " acme_choice
     done
 fi
-if [ $acme_choice = "1" ]; then
+if [ "$acme_choice" = "1" ]; then
     acme_validation=standalone
-    elif [ $acme_choice = "2" ]; then
+    elif [ "$acme_choice" = "2" ]; then
     acme_validation=cloudflare
 fi
 
