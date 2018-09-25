@@ -175,6 +175,9 @@ else
     echo "acme.sh failed to issue certificate"
     exit 1
 fi
+if [ ! -d /var/www/${domain_name}/conf/nginx ]; then
+    cert_only=1
+fi
 if [ "$cert_only" = "0" ]; then
     if [ -f /etc/letsencrypt/live/${domain_name}/fullchain.pem ] && [ -f /etc/letsencrypt/live/${domain_name}/key.pem ]; then
         # add certificate to the nginx vhost configuration
@@ -269,6 +272,9 @@ else
             echo ""
 
         fi
+    else
+        echo "acme.sh failed to install certificate"
+        exit 1
     fi
 fi
 

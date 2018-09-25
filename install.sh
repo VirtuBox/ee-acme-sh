@@ -25,24 +25,32 @@ if [ ! -f ~/.acme.sh/acme.sh ]; then
     wget -O -  https://get.acme.sh | sh
 fi
 
-
 # ACME validation choice
 
 echo ""
 echo "Welcome to the ee-acme-sh installation."
 echo ""
 
+BASHRC_EE_ACME_FIRST_RELEASE=$(grep "ee-acme" $HOME/.bashrc)
+BASHRC_EE_ACME_LAST_RELEASE=$(grep "ee-acme.sh" $HOME/.bashrc)
+
 # install ee-acme-cf or ee-acme-standalone
-if [ -d $HOME/.ee-acme ]; then
+if [ -f $HOME/.ee-acme/ee-acme ] && [ -z "$BASHRC_EE_ACME_LAST_RELEASE" ]; then
     rm -rf $HOME/.ee-acme/*
     echo 'alias ee-acme="/root/.ee-acme/ee-acme.sh"' >> $HOME/.ee-acme/ee-acme
-    wget -O $HOME/.ee-acme/ee-acme.sh https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme.sh
+    wget -qO $HOME/.ee-acme/ee-acme.sh https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme.sh
     chmod +x $HOME/.ee-acme/ee-acme.sh
-else
-    mkdir -p  $HOME/.ee-acme
-    wget -O $HOME/.ee-acme/ee-acme.sh https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme.sh
+    elif [ -x $HOME/.ee-acme/ee-acme.sh ]; then
+    rm $HOME/.ee-acme/ee-acme.sh
+    wget -qO $HOME/.ee-acme/ee-acme.sh https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme.sh
     chmod +x $HOME/.ee-acme/ee-acme.sh
-    echo 'alias ee-acme="/root/.ee-acme/ee-acme.sh"' >> $HOME/.bashrc
+    elif [ ! -d  $HOME/.ee-acme ]; then
+    mkdir -p $HOME/.ee-acme
+    wget -qO $HOME/.ee-acme/ee-acme.sh https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/script/ee-acme.sh
+    chmod +x $HOME/.ee-acme/ee-acme.sh
+    if [ -z "$BASHRC_EE_ACME_FIRST_RELEASE" ] && [ -z "$BASHRC_EE_ACME_LAST_RELEASE" ]; then
+        echo 'alias ee-acme="/root/.ee-acme/ee-acme.sh"' >> $HOME/.bashrc
+    fi
 fi
 
 
