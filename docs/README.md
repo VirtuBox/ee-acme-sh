@@ -13,11 +13,12 @@
 - Generate ECDSA Certificates with ECC 384 Bits private key
 - Automated Certificates Renewal
 - Nginx mainline & stable release support
+- Cert-only mode available
 
 ## Installation
 
 ```bash
- bash <(wget -qO - https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/install.sh)
+bash <(wget -qO - https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/install.sh)
 
 # enable acme.sh & ee-acme-sh
 source .bashrc
