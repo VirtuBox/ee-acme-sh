@@ -1,7 +1,5 @@
 #!/bin/bash
 
-clear
-
 # Colors
 CSI="\\033["
 CEND="${CSI}0m"
