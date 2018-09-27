@@ -102,11 +102,11 @@ while [[ $# -gt 0 ]]; do
         shift
         ;;
     --cert-only)
-        cert_only=1
+        cert_only="1"
         shift
         ;;
     --admin)
-        easyengine_backend=1
+        easyengine_backend="1"
         shift
         ;;
     -h | --help | help)
@@ -126,10 +126,10 @@ if [ -z "${domain_name}" ]; then
     echo ""
 fi
 
-if [ -z "$cert_only" ]; then
+if [ "$cert_only" != "1" ]; then
     cert_only=0
 fi
-if [ -z "$easyengine_backend" ]; then
+if [ "$easyengine_backend" != "1" ]; then
     easyengine_backend=0
 fi
 
