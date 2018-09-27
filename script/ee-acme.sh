@@ -165,7 +165,7 @@ fi
 SERVER_PUBLIC_IP=$(curl -s http://v4.vtbox.net)
 DOMAIN_IP=$(dig +short @8.8.8.8 $domain_name)
 
-if [ ! -d $HOME/.acme.sh/${domain_name}_ecc ] && [ ! -f /etc/letsencrypt/live/${domain_name}/fullchain.pem ]; then
+if [ ! -d $HOME/.acme.sh/${domain_name}_ecc ] || [ ! -f /etc/letsencrypt/live/${domain_name}/fullchain.pem ]; then
     if [ $acme_validation = "cloudflare" ]; then
         if [ $domain_type = "domain" ]; then
             $HOME/.acme.sh/acme.sh --issue -d ${domain_name} -d www.${domain_name} --keylength ec-384 --dns dns_cf --dnssleep 60
@@ -191,20 +191,20 @@ if [ ! -d $HOME/.acme.sh/${domain_name}_ecc ] && [ ! -f /etc/letsencrypt/live/${
         fi
     fi
 else
-    echo "certificate already exit"
+    echo "certificate already exist"
     exit 1
 fi
-
-# check if folder already exist
-if [ -d /etc/letsencrypt/live/${domain_name} ]; then
-    sudo rm -rf /etc/letsencrypt/live/${domain_name}/*
-else
-    # create folder to store certificate
-    sudo mkdir -p /etc/letsencrypt/live/${domain_name}
-fi
-
-# install the cert and reload nginx
 if [ -f $HOME/.acme.sh/${domain_name}_ecc/fullchain.cer ]; then
+    # check if folder already exist
+    if [ -d /etc/letsencrypt/live/${domain_name} ]; then
+        sudo rm -rf /etc/letsencrypt/live/${domain_name}/*
+    else
+        # create folder to store certificate
+        sudo mkdir -p /etc/letsencrypt/live/${domain_name}
+    fi
+
+    # install the cert and reload nginx
+
     $HOME/.acme.sh/acme.sh --install-cert -d ${domain_name} --ecc \
         --cert-file /etc/letsencrypt/live/${domain_name}/cert.pem \
         --key-file /etc/letsencrypt/live/${domain_name}/key.pem \
