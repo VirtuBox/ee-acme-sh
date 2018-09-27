@@ -129,6 +129,9 @@ fi
 if [ -z "$cert_only" ]; then
     cert_only=0
 fi
+if [ -z "$easyengine_backend" ]; then
+    easyengine_backend=0
+fi
 
 if [ -z "$acme_validation" ]; then
     echo ""
@@ -143,7 +146,7 @@ elif [ "$acme_choice" = "2" ]; then
     acme_validation=cloudflare
 fi
 
-if [ ! -f /etc/nginx/sites-available/${domain_name} ] && [ "$cert_only" = "0" ] && [ -z "$easyengine_backend" ]; then
+if [ ! -f /etc/nginx/sites-available/${domain_name} ] && [ "$cert_only" = "0" ] && [ "$easyengine_backend" = "0" ]; then
     echo "####################################"
     echo "Error : Nginx vhost doesn't exist"
     echo "####################################"
@@ -174,7 +177,7 @@ if [ ! -d $HOME/.acme.sh/${domain_name}_ecc ] || [ ! -f /etc/letsencrypt/live/${
         elif [ $domain_type = "subdomain" ]; then
             $HOME/.acme.sh/acme.sh --issue -d ${domain_name} --keylength ec-384 --dns dns_cf --dnssleep 60
         elif [ $domain_type = "wildcard" ]; then
-            $HOME/.acme.sh/acme.sh --issue -d ${domain_name} -d "*.${domain_name}" --keylength ec-384 --dns dns_cf --dnssleep 60
+            $HOME/.acme.sh/acme.sh --issue -d ${domain_name} -d \*.${domain_name} --keylength ec-384 --dns dns_cf --dnssleep 60
         fi
     elif [ $acme_validation = "standalone" ]; then
         sudo apt-get install socat -y
@@ -222,10 +225,10 @@ else
     echo "####################################"
     exit 1
 fi
-if [ ! -d /var/www/${domain_name}/conf/nginx ] && [ -z "$easyengine_backend" ]; then
+if [ ! -d /var/www/${domain_name}/conf/nginx ] && [ "$easyengine_backend" = "0" ]; then
     cert_only=1
 fi
-if [ "$cert_only" = "0" ] && [ -z "$easyengine_backend" ]; then
+if [ "$cert_only" = "0" ] && [ "$easyengine_backend" = "0" ]; then
     if [ -f /etc/letsencrypt/live/${domain_name}/fullchain.pem ] && [ -f /etc/letsencrypt/live/${domain_name}/key.pem ]; then
         # add certificate to the nginx vhost configuration
         CURRENT=$(nginx -v 2>&1 | awk -F "/" '{print $2}' | grep 1.15)
