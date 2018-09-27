@@ -144,7 +144,9 @@ elif [ "$acme_choice" = "2" ]; then
 fi
 
 if [ ! -f /etc/nginx/sites-available/${domain_name} ] && [ "$cert_only" = "0" ] && [ -z "$easyengine_backend" ]; then
-    echo "Error: non existant domain"
+    echo "####################################"
+    echo "Error : Nginx vhost doesn't exist"
+    echo "####################################"
     exit 1
 fi
 
@@ -186,12 +188,16 @@ if [ ! -d $HOME/.acme.sh/${domain_name}_ecc ] || [ ! -f /etc/letsencrypt/live/${
                 exit 1
             fi
         else
-            echo "domain do not resolve server public IP"
+            echo "####################################"
+            echo "Error : domain do not resolve server IP"
+            echo "####################################"
             exit 1
         fi
     fi
 else
-    echo "certificate already exist"
+    echo "####################################"
+    echo "Certificate Already Exist"
+    echo "####################################"
     exit 1
 fi
 if [ -f $HOME/.acme.sh/${domain_name}_ecc/fullchain.cer ]; then
@@ -211,7 +217,9 @@ if [ -f $HOME/.acme.sh/${domain_name}_ecc/fullchain.cer ]; then
         --fullchain-file /etc/letsencrypt/live/${domain_name}/fullchain.pem \
         --reloadcmd "sudo systemctl reload nginx.service"
 else
-    echo "acme.sh failed to issue certificate"
+    echo "####################################"
+    echo "Acme.sh failed to issue certificate"
+    echo "####################################"
     exit 1
 fi
 if [ ! -d /var/www/${domain_name}/conf/nginx ] && [ -z "$easyengine_backend" ]; then
@@ -277,7 +285,9 @@ server {
 EOF
         fi
     else
+        echo "####################################"
         echo "acme.sh failed to install certificate"
+        echo "####################################"
         exit 1
     fi
     VERIFY_NGINX_CONFIG=$(nginx -t 2>&1 | grep failed)
@@ -334,7 +344,9 @@ else
 
         fi
     else
+        echo "####################################"
         echo "acme.sh failed to install certificate"
+        echo "####################################"
         exit 1
     fi
 fi
