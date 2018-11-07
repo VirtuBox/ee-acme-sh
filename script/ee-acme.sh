@@ -68,6 +68,11 @@ _help() {
     return 0
 }
 
+if [ "$#" = "0" ]; then
+    _help
+    exit 1
+fi
+
 if [ ! -f /etc/systemd/system/multi-user.target.wants/nginx.service ]; then
     {
         sudo systemctl enable nginx.service
@@ -218,7 +223,7 @@ if [ -f $HOME/.acme.sh/${domain_name}_ecc/fullchain.cer ]; then
         --cert-file /etc/letsencrypt/live/${domain_name}/cert.pem \
         --key-file /etc/letsencrypt/live/${domain_name}/key.pem \
         --fullchain-file /etc/letsencrypt/live/${domain_name}/fullchain.pem \
-        --reloadcmd "sudo systemctl enable nginx.service &&  sudo systemctl start nginx.service"
+        --reloadcmd "sudo systemctl enable nginx.service &&  sudo systemctl restart nginx.service"
 else
     echo "####################################"
     echo "Acme.sh failed to issue certificate"
