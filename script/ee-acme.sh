@@ -1,14 +1,13 @@
 #!/bin/bash
-#
-# ee-acme-sh Bash script
-# Bash script to install Let's Encrypt SSL certificates automatically using acme.sh with EasyEngine
-#
-# Version 2.1 - 2018-09-27
-# Published & maintained by VirtuBox - https://virtubox.net
-#
-# Sources :
-# https://github.com/VirtuBox/ee-acme-sh
-#
+#----------------------------------------------------------------------------
+# EE-ACME-SH -  Automated SSL certificate setup for EasyEngine with acme.sh
+#----------------------------------------------------------------------------
+# Website:       https://virtubox.net
+# GitHub:        https://github.com/VirtuBox/ee-acme-sh
+# Author:        VirtuBox
+# License:       M.I.T
+#----------------------------------------------------------------------------
+
 
 # install acme.sh if needed
 echo ""
