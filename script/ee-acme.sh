@@ -171,8 +171,10 @@ if [ $acme_validation = "cloudflare" ] && [ -z "$CF_ACME_ACCOUNT_CHECK" ]; then
     echo "SAVED_CF_Email='$cf_email'" >>.acme.sh/account.conf
 fi
 
-SERVER_PUBLIC_IP=$(curl -s http://v4.vtbox.net)
-DOMAIN_IP=$(dig +short @8.8.8.8 $domain_name)
+NET_INTERFACES_WAN=$(ip -4 route get 8.8.8.8 | grep -oP "dev [^[:space:]]+ " | cut -d ' ' -f 2)
+SERVER_PUBLIC_IP=$(ip -4 address show ${NET_INTERFACES_WAN} | grep 'inet' | sed 's/.*inet \([0-9\.]\+\).*/\1/')
+DOMAIN_IP=$(/usr/bin/dig +short @8.8.8.8 "$domain_name")
+
 
 if [ ! -d $HOME/.acme.sh/${domain_name}_ecc ] || [ ! -f /etc/letsencrypt/live/${domain_name}/fullchain.pem ]; then
     if [ $acme_validation = "cloudflare" ]; then
