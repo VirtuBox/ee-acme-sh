@@ -224,7 +224,7 @@ if [ -f $HOME/.acme.sh/${domain_name}_ecc/fullchain.cer ]; then
         --cert-file /etc/letsencrypt/live/${domain_name}/cert.pem \
         --key-file /etc/letsencrypt/live/${domain_name}/key.pem \
         --fullchain-file /etc/letsencrypt/live/${domain_name}/fullchain.pem \
-        --reloadcmd "sudo systemctl enable nginx.service &&  sudo systemctl restart nginx.service"
+        --reloadcmd "service nginx restart"
 else
     echo "####################################"
     echo "Acme.sh failed to issue certificate"
