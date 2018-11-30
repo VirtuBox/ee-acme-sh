@@ -1,6 +1,6 @@
-# ee-acme-sh
+# wo-acme-sh
 
-## Bash script to install Let's Encrypt SSL certificates automatically using acme.sh on servers running with EasyEngine
+## Bash script to install Let's Encrypt SSL certificates automatically using acme.sh on servers running with WordOps, developed by [Virtubox](https://virtubox.net) for EasyEngine and forked to WordOps.
 
 ![ee-acme-sh](https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/ee-acme.png)
 
