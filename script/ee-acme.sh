@@ -174,7 +174,7 @@ if [ ! -d $HOME/.acme.sh/${domain_name}_ecc ] || [ ! -f /etc/letsencrypt/live/${
             if [ $domain_type = "domain" ]; then
                 $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -d www.${domain_name} -k ec-384 --standalone --pre-hook "service nginx stop " --post-hook "service nginx start"
                 elif [ "$domain_type" = "subdomain" ]; then
-                $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -k --standalone --pre-hook "service nginx stop " --post-hook "service nginx start"
+                $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -k ec-384 --standalone --pre-hook "service nginx stop " --post-hook "service nginx start"
                 elif [ "$domain_type" = "wildcard" ]; then
                 echo "standalone mode do not support wildcard certificates"
                 exit 1
