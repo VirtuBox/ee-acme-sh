@@ -1,37 +1,38 @@
 #!/bin/bash
-#----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # EE-ACME-SH -  Automated SSL certificate setup for EasyEngine with acme.sh
-#----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Website:       https://virtubox.net
 # GitHub:        https://github.com/VirtuBox/ee-acme-sh
 # Author:        VirtuBox
 # License:       M.I.T
-#----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# Version 2.1 - 2019-01-28
+# ----------------------------------------------------------------------------
 
 
 # install acme.sh if needed
-echo ""
-echo "checking if acme.sh is already installed"
-echo ""
-if [ ! -f ~/.acme.sh/acme.sh ]; then
-    echo ""
-    echo "installing acme.sh"
-    echo ""
+[ ! -f $HOME/.acme.sh/acme.sh ] && {
     wget -O - https://get.acme.sh | sh
-fi
+}
 
-echo ""
-echo "checking if dig is available"
-echo ""
-if [ ! -x /usr/bin/dig ]; then
-    apt-get install bind9-host -y >>/dev/null
-fi
-echo ""
-echo "checking if curl is available"
-echo ""
-if [ ! -x /usr/bin/curl ]; then
+# install dig if needed
+[ ! -x /usr/bin/dig ] && {
+    apt-get install bind9-host -y
+}
+
+# find curl binary path
+CURL_BIN="$(/usr/bin/which curl)"
+
+# install curl if needed
+[ ! -x "$CURL_BIN" ] && {
     apt-get install curl -y >>/dev/null
-fi
+}
+
+# install socat if needed
+[ ! -x /usr/bin/socat ] && {
+    apt-get install socat -y >>/dev/null
+}
 
 _help() {
     echo "Issue and install SSL certificates using acme.sh with EasyEngine"
@@ -67,99 +68,82 @@ _help() {
     return 0
 }
 
-if [ "$#" = "0" ]; then
+if [ "${#}" = "0" ]; then
     _help
     exit 1
+else
+
+    while [ "${#}" -gt 0 ]; do
+        case "${1}" in
+            -d | --domain)
+                domain_name="$2"
+                domain_type=domain
+                shift
+            ;;
+            -s | --subdomain)
+                domain_name="$2"
+                domain_type=subdomain
+                shift
+            ;;
+            -w | --wildcard)
+                domain_name="$2"
+                domain_type=wildcard
+                shift
+            ;;
+            --cf)
+                acme_validation=cloudflare
+            ;;
+            --standalone)
+                acme_validation=standalone
+            ;;
+            --cert-only)
+                cert_only="1"
+            ;;
+            --admin)
+                easyengine_backend="1"
+            ;;
+            -h | --help | help)
+                _help
+                exit 1
+            ;;
+            *) # positional args
+            ;;
+        esac
+        shift
+    done
 fi
 
-if [ ! -f /etc/systemd/system/multi-user.target.wants/nginx.service ]; then
-    {
-        sudo systemctl enable nginx.service
-        sudo systemctl start nginx
-    } >>/var/log/ee-acme-sh.log
-fi
-
-while [[ $# -gt 0 ]]; do
-    arg="$1"
-    case $arg in
-    -d | --domain)
-        domain_name=$2
-        domain_type=domain
-        shift
-        ;;
-    -s | --subdomain)
-        domain_name=$2
-        domain_type=subdomain
-        shift
-        ;;
-    -w | --wildcard)
-        domain_name=$2
-        domain_type=wildcard
-        shift
-        ;;
-    --cf)
-        acme_validation=cloudflare
-        shift
-        ;;
-    --standalone)
-        acme_validation=standalone
-        shift
-        ;;
-    --cert-only)
-        cert_only="1"
-        shift
-        ;;
-    --admin)
-        easyengine_backend="1"
-        shift
-        ;;
-    -h | --help | help)
-        _help
-        exit 1
-        ;;
-    *) # positional args
-        ;;
-    esac
-    shift
-done
-
-if [ -z "${domain_name}" ]; then
+if [ -z "$domain_name" ]; then
     echo ""
     echo "What is your domain ?: "
     read -r domain_name
     echo ""
 fi
 
-if [ "$cert_only" != "1" ]; then
-    cert_only=0
-fi
-if [ "$easyengine_backend" != "1" ]; then
-    easyengine_backend=0
-fi
 
 if [ -z "$acme_validation" ]; then
     echo ""
     echo "Do you want to use standalone mode [1] or dns mode with Cloudflare [2] ?"
-    while [[ $acme_choice != "1" && $acme_choice != "2" ]]; do
+    while [[ "$acme_choice" != "1" && "$acme_choice" != "2" ]]; do
         read -p "Select an option [1-2]: " acme_choice
     done
 fi
 if [ "$acme_choice" = "1" ]; then
     acme_validation=standalone
-elif [ "$acme_choice" = "2" ]; then
+    elif [ "$acme_choice" = "2" ]; then
     acme_validation=cloudflare
 fi
 
-if [ ! -f /etc/nginx/sites-available/${domain_name} ] && [ "$cert_only" = "0" ] && [ "$easyengine_backend" = "0" ]; then
+if [ ! -f /etc/nginx/sites-available/${domain_name} ] && [ -z "$cert_only" ] && [ -z "$easyengine_backend" ]; then
     echo "####################################"
     echo "Error : Nginx vhost doesn't exist"
     echo "####################################"
     exit 1
 fi
 
-CF_ACME_ACCOUNT_CHECK=$(grep "CF" .acme.sh/account.conf)
+CF_ACME_ACCOUNT_CHECK=$(grep "CF" $HOME/.acme.sh/account.conf)
 
-if [ $acme_validation = "cloudflare" ] && [ -z "$CF_ACME_ACCOUNT_CHECK" ]; then
+if [ "$acme_validation" = "cloudflare" ] && [ -z "$CF_ACME_ACCOUNT_CHECK" ]; then
     echo ""
     echo "What is your Cloudflare email address ? :"
     echo ""
@@ -167,32 +151,31 @@ if [ $acme_validation = "cloudflare" ] && [ -z "$CF_ACME_ACCOUNT_CHECK" ]; then
     echo "What is your Cloudflare API Key ? You API Key is available on https://www.cloudflare.com/a/profile"
     read -r cf_api_key
 
-    echo "SAVED_CF_Key='$cf_api_key'" >>.acme.sh/account.conf
-    echo "SAVED_CF_Email='$cf_email'" >>.acme.sh/account.conf
+    echo "SAVED_CF_Key='$cf_api_key'" >>$HOME/.acme.sh/account.conf
+    echo "SAVED_CF_Email='$cf_email'" >>$HOME/.acme.sh/account.conf
 fi
 
-NET_INTERFACES_WAN=$(ip -4 route get 8.8.8.8 | grep -oP "dev [^[:space:]]+ " | cut -d ' ' -f 2)
-SERVER_PUBLIC_IP=$(ip -4 address show ${NET_INTERFACES_WAN} | grep 'inet' | sed 's/.*inet \([0-9\.]\+\).*/\1/')
-DOMAIN_IP=$(/usr/bin/dig +short @8.8.8.8 "$domain_name")
+
 
 
 if [ ! -d $HOME/.acme.sh/${domain_name}_ecc ] || [ ! -f /etc/letsencrypt/live/${domain_name}/fullchain.pem ]; then
-    if [ $acme_validation = "cloudflare" ]; then
-        if [ $domain_type = "domain" ]; then
-            $HOME/.acme.sh/acme.sh --issue -d ${domain_name} -d www.${domain_name} --keylength ec-384 --dns dns_cf --dnssleep 60
-        elif [ $domain_type = "subdomain" ]; then
-            $HOME/.acme.sh/acme.sh --issue -d ${domain_name} --keylength ec-384 --dns dns_cf --dnssleep 60
-        elif [ $domain_type = "wildcard" ]; then
-            $HOME/.acme.sh/acme.sh --issue -d ${domain_name} -d \*.${domain_name} --keylength ec-384 --dns dns_cf --dnssleep 60
+    if [ "$acme_validation" = "cloudflare" ]; then
+        if [ "$domain_type" = "domain" ]; then
+            $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -d www.${domain_name} -k ec-384 --dns dns_cf --dnssleep 60
+            elif [ "$domain_type" = "subdomain" ]; then
+            $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -k ec-384 --dns dns_cf --dnssleep 60
+            elif [ "$domain_type" = "wildcard" ]; then
+            $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -d \*.${domain_name} -k ec-384 --dns dns_cf --dnssleep 60
         fi
-    elif [ $acme_validation = "standalone" ]; then
-        sudo apt-get install socat -y
+        elif [ "$acme_validation" = "standalone" ]; then
+        SERVER_PUBLIC_IP=$("$CURL_BIN" -s https://v4.vtbox.net)
+        DOMAIN_IP=$(/usr/bin/dig +short @8.8.8.8 "$domain_name")
         if [ "$SERVER_PUBLIC_IP" = "$DOMAIN_IP" ]; then
             if [ $domain_type = "domain" ]; then
-                $HOME/.acme.sh/acme.sh --issue -d ${domain_name} -d www.${domain_name} --keylength ec-384 --standalone --pre-hook "service nginx stop " --post-hook "service nginx start"
-            elif [ $domain_type = "subdomain" ]; then
-                $HOME/.acme.sh/acme.sh --issue -d ${domain_name} --keylength ec-384 --standalone --pre-hook "service nginx stop " --post-hook "service nginx start"
-            elif [ $domain_type = "wildcard" ]; then
+                $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -d www.${domain_name} -k ec-384 --standalone --pre-hook "service nginx stop " --post-hook "service nginx start"
+                elif [ "$domain_type" = "subdomain" ]; then
+                $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -k --standalone --pre-hook "service nginx stop " --post-hook "service nginx start"
+                elif [ "$domain_type" = "wildcard" ]; then
                 echo "standalone mode do not support wildcard certificates"
                 exit 1
             fi
@@ -220,24 +203,24 @@ if [ -f $HOME/.acme.sh/${domain_name}_ecc/fullchain.cer ]; then
 
     # install the cert and reload nginx
 
-    $HOME/.acme.sh/acme.sh --install-cert -d ${domain_name} --ecc \
-        --cert-file /etc/letsencrypt/live/${domain_name}/cert.pem \
-        --key-file /etc/letsencrypt/live/${domain_name}/key.pem \
-        --fullchain-file /etc/letsencrypt/live/${domain_name}/fullchain.pem \
-        --reloadcmd "service nginx restart"
+    $HOME/.acme.sh/acme.sh --install-cert -d "$domain_name" --ecc \
+    --cert-file /etc/letsencrypt/live/${domain_name}/cert.pem \
+    --key-file /etc/letsencrypt/live/${domain_name}/key.pem \
+    --fullchain-file /etc/letsencrypt/live/${domain_name}/fullchain.pem \
+    --reloadcmd "service nginx restart"
 else
     echo "####################################"
     echo "Acme.sh failed to issue certificate"
     echo "####################################"
     exit 1
 fi
-if [ ! -d /var/www/${domain_name}/conf/nginx ] && [ "$easyengine_backend" = "0" ]; then
+if [ ! -d /var/www/${domain_name}/conf/nginx ] && [ -z "$easyengine_backend" ]; then
     cert_only=1
 fi
-if [ "$cert_only" = "0" ] && [ "$easyengine_backend" = "0" ]; then
+if [ -z "$cert_only" ] && [ -z "$easyengine_backend" ]; then
     if [ -f /etc/letsencrypt/live/${domain_name}/fullchain.pem ] && [ -f /etc/letsencrypt/live/${domain_name}/key.pem ]; then
         # add certificate to the nginx vhost configuration
-        CURRENT=$(nginx -v 2>&1 | awk -F "/" '{print $2}' | grep 1.15)
+        CURRENT=$(/usr/sbin/nginx -v 2>&1 | awk -F "/" '{print $2}' | grep 1.15)
         if [ -z "$CURRENT" ]; then
             cat <<EOF >/var/www/${domain_name}/conf/nginx/ssl.conf
         # SSL configuration added by ee-acme-sh
@@ -261,7 +244,7 @@ EOF
         fi
 
         # add redirection from http to https
-        if [ $domain_type = "domain" ]; then
+        if [ "$domain_type" = "domain" ]; then
             cat <<EOF >/etc/nginx/conf.d/force-ssl-${domain_name}.conf
 server {
     # SSL redirection added by ee-acme-sh
@@ -271,7 +254,7 @@ server {
     return 301 https://${domain_name}\$request_uri;
 }
 EOF
-        elif [ $domain_type = "subdomain" ]; then
+            elif [ "$domain_type" = "subdomain" ]; then
             cat <<EOF >/etc/nginx/conf.d/force-ssl-${domain_name}.conf
 server {
     # SSL redirection added by ee-acme-sh
@@ -281,7 +264,7 @@ server {
     return 301 https://${domain_name}\$request_uri;
 }
 EOF
-        elif [ $domain_type = "wildcard" ]; then
+            elif [ "$domain_type" = "wildcard" ]; then
             cat <<EOF >/etc/nginx/conf.d/force-ssl-${domain_name}.conf
 server {
     # SSL redirection added by ee-acme-sh
@@ -310,7 +293,7 @@ EOF
         echo "Nginx configuration is not correct"
         echo "####################################"
     fi
-elif [ "$easyengine_backend" = "1" ]; then
+    elif [ "$easyengine_backend" = "1" ]; then
 
     if [ -f /etc/letsencrypt/live/${domain_name}/fullchain.pem ] && [ -f /etc/letsencrypt/live/${domain_name}/key.pem ]; then
         sed -i "s/ssl_certificate \/var\/www\/22222\/cert\/22222.crt;/ssl_certificate \/etc\/letsencrypt\/live\/${domain_name}\/fullchain.pem;/" /etc/nginx/sites-available/22222

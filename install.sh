@@ -12,11 +12,7 @@ if [ "$(id -u)" != "0" ]; then
     exit 1
 fi
 
-# install acme.sh if needed
-echo ""
-echo "checking if acme.sh is already installed"
-echo ""
-if [ ! -f ~/.acme.sh/acme.sh ]; then
+if [ ! -f $HOME/.acme.sh/acme.sh ]; then
     echo ""
     echo "installing acme.sh"
     echo ""
