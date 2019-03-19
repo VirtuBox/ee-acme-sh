@@ -22,10 +22,10 @@
 }
 
 # find curl binary path
-CURL_BIN="$(/usr/bin/which curl)"
+CURL_BIN="$(command -v curl)"
 
 # install curl if needed
-[ ! -x "$CURL_BIN" ] && {
+[ -z "$CURL_BIN" ] && {
     apt-get install curl -y >>/dev/null
 }
 
@@ -161,11 +161,11 @@ fi
 if [ ! -d $HOME/.acme.sh/${domain_name}_ecc ] || [ ! -f /etc/letsencrypt/live/${domain_name}/fullchain.pem ]; then
     if [ "$acme_validation" = "cloudflare" ]; then
         if [ "$domain_type" = "domain" ]; then
-            $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -d www.${domain_name} -k ec-384 --dns dns_cf --dnssleep 60
+            $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -d www.${domain_name} -k ec-384 --dns dns_cf 
             elif [ "$domain_type" = "subdomain" ]; then
-            $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -k ec-384 --dns dns_cf --dnssleep 60
+            $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -k ec-384 --dns dns_cf 
             elif [ "$domain_type" = "wildcard" ]; then
-            $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -d \*.${domain_name} -k ec-384 --dns dns_cf --dnssleep 60
+            $HOME/.acme.sh/acme.sh --issue -d "$domain_name" -d \*.${domain_name} -k ec-384 --dns dns_cf 
         fi
         elif [ "$acme_validation" = "standalone" ]; then
         SERVER_PUBLIC_IP=$("$CURL_BIN" -s https://v4.vtbox.net)
